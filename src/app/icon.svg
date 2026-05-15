@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Lumelogics">
+  <defs>
+    <linearGradient id="ring" x1="20%" y1="20%" x2="80%" y2="80%">
+      <stop offset="0%" stop-color="#b89aff"/>
+      <stop offset="55%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#3d1681"/>
+    </linearGradient>
+    <linearGradient id="inner" x1="20%" y1="20%" x2="80%" y2="80%">
+      <stop offset="0%" stop-color="#9a72ff"/>
+      <stop offset="100%" stop-color="#531eab"/>
+    </linearGradient>
+    <mask id="donutHole">
+      <rect width="64" height="64" fill="white"/>
+      <circle cx="32" cy="32" r="4" fill="black"/>
+    </mask>
+  </defs>
+  <g mask="url(#donutHole)">
+    <circle cx="32" cy="32" r="30" fill="url(#ring)"/>
+    <circle cx="32" cy="32" r="27" fill="url(#inner)"/>
+    <circle cx="32" cy="32" r="29.5" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="0.75"/>
+  </g>
+</svg>
