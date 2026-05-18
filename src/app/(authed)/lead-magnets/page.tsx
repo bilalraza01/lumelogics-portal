@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { Loader2, Pencil, Plus, Trash2 } from "lucide-react";
+import { Check, Copy, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import {
   leadMagnetsApi,
@@ -17,12 +17,33 @@ const TYPE_LABELS: Record<string, string> = {
   external_url: "External URL",
 };
 
+// Public opt-in (email gate) page on the marketing site.
+const FRONTEND = process.env.NEXT_PUBLIC_FRONTEND_URL ?? "";
+const optinUrl = (slug: string) => `${FRONTEND}/free/${slug}`;
+
 export default function LeadMagnetsIndexPage() {
   const { apiFetch } = useAuth();
   const [magnets, setMagnets] = useState<AdminLeadMagnet[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  async function onCopy(m: AdminLeadMagnet) {
+    const url = optinUrl(m.slug);
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      // Clipboard API blocked (e.g. non-secure context): let them copy by hand.
+      window.prompt("Copy this opt-in URL:", url);
+      return;
+    }
+    setCopiedId(m.id);
+    setTimeout(
+      () => setCopiedId((cur) => (cur === m.id ? null : cur)),
+      1600,
+    );
+  }
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -136,6 +157,18 @@ export default function LeadMagnetsIndexPage() {
                     </td>
                     <td className="px-5 py-3">
                       <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={() => onCopy(m)}
+                          title={`Copy opt-in link: ${optinUrl(m.slug)}`}
+                          aria-label="Copy opt-in link"
+                          className="inline-flex cursor-pointer items-center rounded-md p-1.5 text-foreground hover:bg-black/5"
+                        >
+                          {copiedId === m.id ? (
+                            <Check size={15} className="text-emerald-600" />
+                          ) : (
+                            <Copy size={15} />
+                          )}
+                        </button>
                         <Link
                           href={`/lead-magnets/${m.id}`}
                           className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[13px] text-foreground hover:bg-black/5"
